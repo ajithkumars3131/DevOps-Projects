@@ -1,0 +1,37 @@
+name: 🧪 UI Tests - Selenium + TestNG
+
+on:
+  push:
+    branches: [main, test]
+  pull_request:
+    branches: [main, test]
+
+jobs:
+  run-ui-tests:
+    name: 🔍 Run Selenium UI Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📦 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: ☕ Set up Java 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: 🌐 Install ChromeDriver
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-chromedriver
+        sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+
+    - name: 🧪 Run TestNG UI Tests
+      run: mvn test -DsuiteXmlFile=ui-testng.xml
+
+    - name: 📁 Upload TestNG Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: ui-test-report
+        path: test-output/
